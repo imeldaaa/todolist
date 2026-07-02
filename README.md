@@ -20,13 +20,13 @@ Buka http://127.0.0.1:8000 — 6 person otomatis dibuat saat pertama kali diakse
 
 1. **Push project ini ke GitHub repo baru** (private/public terserah kamu):
    ```bash
-   git init
-   git add .
-   git commit -m "Task Grove dashboard"
-   git branch -M main
-   git remote add origin <url-repo-github-kamu>
-   git push -u origin main
-   ```
+git init
+git add .
+git commit -m "Task Grove dashboard"
+git branch -M main
+git remote add origin <url-repo-github-kamu>
+git push -u origin main
+```
 
 2. **Buat project baru di Railway** (railway.app) → "New Project" → "Deploy from GitHub repo" → pilih repo ini.
 
