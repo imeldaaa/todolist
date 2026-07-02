@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Do List Imelda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'todo/css/style.css' %}">
+</head>
+<body>
+
+<div class="fireflies" aria-hidden="true">
+  <span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <h1>Imelda's <span>To Do List</span></h1>
+    <p class="subtitle">I am confident, capable, and ready</p>
+  </div>
+</header>
+
+<main class="board">
+  {% for card in cards %}
+  <section class="card" data-person-id="{{ card.person.id }}">
+    <div class="card__header">
+      <h2>{{ card.person.name }}</h2>
+      <span class="count-badge" data-role="todo-count">{{ card.todo|length }}</span>
+    </div>
+
+    <form class="add-form" data-role="add-form">
+      <input type="text" name="title" class="input-title" placeholder="Tugas baru…" maxlength="255" required>
+      <div class="add-form__row">
+        <input type="date" name="deadline" class="input-date">
+        <button type="submit" class="btn-add" aria-label="Tambah tugas">+</button>
+      </div>
+    </form>
+
+    <ul class="todo-list" data-role="todo-list">
+      {% for task in card.todo %}
+      <li class="task-item" data-task-id="{{ task.id }}" data-deadline-iso="{% if task.deadline %}{{ task.deadline|date:'Y-m-d' }}{% endif %}">
+        <label class="task-check">
+          <input type="checkbox" data-role="toggle">
+          <span class="checkmark"></span>
+        </label>
+        <div class="task-body">
+          <span class="task-title">{{ task.title }}</span>
+          {% if task.deadline %}
+            <span class="task-deadline
+              {% if task.deadline < today %}is-overdue
+              {% elif task.deadline == today %}is-today
+              {% endif %}">
+              {{ task.deadline|date:"d M Y" }}
+            </span>
+          {% else %}
+            <span class="task-deadline is-none">Tanpa deadline</span>
+          {% endif %}
+        </div>
+        <button class="btn-delete" data-role="delete" aria-label="Hapus tugas" title="Hapus">×</button>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="done-section">
+      <button type="button" class="done-toggle" data-role="done-toggle">
+        <span>Selesai</span>
+        <span class="count-badge count-badge--muted" data-role="done-count">{{ card.done|length }}</span>
+        <span class="chevron">⌄</span>
+      </button>
+      <ul class="done-list" data-role="done-list" hidden>
+        {% for task in card.done %}
+        <li class="task-item task-item--done" data-task-id="{{ task.id }}">
+          <label class="task-check">
+            <input type="checkbox" data-role="toggle" checked>
+            <span class="checkmark"></span>
+          </label>
+          <div class="task-body">
+            <span class="task-title">{{ task.title }}</span>
+            <span class="task-deadline is-done-date">Selesai {{ task.completed_at|date:"d M Y" }}</span>
+          </div>
+          <button class="btn-delete" data-role="delete" aria-label="Hapus tugas" title="Hapus">×</button>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+</main>
+
+<template id="task-item-template">
+  <li class="task-item" data-task-id="">
+    <label class="task-check">
+      <input type="checkbox" data-role="toggle">
+      <span class="checkmark"></span>
+    </label>
+    <div class="task-body">
+      <span class="task-title"></span>
+      <span class="task-deadline"></span>
+    </div>
+    <button class="btn-delete" data-role="delete" aria-label="Hapus tugas" title="Hapus">×</button>
+  </li>
+</template>
+
+<script>
+  window.CSRF_TOKEN = "{{ csrf_token }}";
+  window.TODAY_ISO = "{{ today|date:'Y-m-d' }}";
+</script>
+<script src="{% static 'todo/js/app.js' %}"></script>
+</body>
+</html>
